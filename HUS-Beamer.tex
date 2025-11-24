@@ -1,0 +1,1286 @@
+\documentclass{beamer}
+
+\usepackage{hus-beamer} % for inserting HUS logos at the top-right and bottom-left corners, modify hus-beamer.sty for removing or re-positioning the logos
+\hypersetup{
+    unicode=true,          % non-Latin characters in Acrobat’s bookmarks
+    pdfencoding=unicode,
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={HUS-Beamer Template},    % title
+    pdfauthor={Le Van Phong},     % author
+    pdfsubject={HUS-Beamer Template},   % subject of the document
+    pdfcreator={Le Van Phong},   % creator of the document
+    pdfproducer={XeLaTeX}, % producer of the document
+    pdfnewwindow=true,      % links in new window
+    colorlinks=false,       % false: boxed links; true: colored links
+    linkcolor=false,          % color of internal links (change box color with linkbordercolor)
+    urlcolor=false}
+    
+% \usepackage[vietnamese]{babel} % Vietnamese in LaTeX
+
+\mode<presentation>{
+	\usefonttheme{professionalfonts} % normal font for math formulas
+	% insert section page with title only
+	% before each section
+	\AtBeginSection[]{
+	\begin{frame}%[noframenumbering] % remove this if you do not want to number section page
+	\vfill
+	\centering
+	\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+	\usebeamerfont{title}\insertsectionhead\par%
+	\end{beamercolorbox}
+	\vfill
+	\end{frame}
+}
+}
+
+% Some common packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\setbeamertemplate{theorems}[numbered] 
+
+\theoremstyle{plain} % other style are definition and example, you can also define your own style
+\usepackage{etoolbox} % for \undef command => re-define environment
+\undef{\proposition}
+\newtheorem{proposition}{Proposition}[section]
+\undef{\definition}
+\newtheorem{definition}{Definition}[section]
+\undef{\lemma}
+\newtheorem{lemma}{Lemma}[section]
+\undef{\corollary}
+\newtheorem{corollary}{Corollary}[section]
+% \undef{\theorem}
+% \newtheorem{theorem}{Theorem}[section]
+\undef{\remark}
+\newtheorem{remark}{Remark}[section]
+
+%%% Numbering examples with a separate counter, comment the below if not use
+
+\undef{\problem}
+\newtheorem{problem}{Problem}[section]
+\undef{\example}
+\theoremstyle{example} % style of the example environment
+\newtheorem{example}{Example}[section]
+
+% Biblatex in beamer
+\usepackage[bibstyle=authoryear, citestyle=authoryear, maxcitenames=2, maxbibnames=100, backend=bibtex]{biblatex}
+
+\setbeamertemplate{section in toc}[sections numbered]
+% Info
+\title{Introduction to Hyperelliptic Curves}
+\author[Phong]{Le Van Phong}
+\institute[HUS-VNU]{University of Science, Vietnam National University\\\texttt{lvphong.imath@gmail.com}}
+\date[2025]{November 2025}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+\placelogofalse % No logo at the title page
+\titlepage
+\end{frame}
+
+\placelogotrue % Logo at other pages
+
+\begin{frame}
+\frametitle{Contents}
+\tableofcontents
+\end{frame}
+
+\begin{frame}{Introduction}
+    We introduce the basic objects: 
+    \begin{itemize}
+        \item The associated étale algebra $L$.\pause
+        
+        \item Hyperelliptic curves of the form $y^2=f(x)$.\pause
+
+        \item Divisors and Jacobian and the $2-$torsion subgroup $J[2]$.
+    \end{itemize}
+    
+\end{frame}
+\section{The étale algebra $L = k[x]/(f(x))$}
+\frame{
+	\frametitle{The étale algebra}
+    \begin{definition}[Derivative and Separability]
+        Let $k$ is a field and $f(x) = \displaystyle \sum_{i=1}^{d}a_ix^i \in k[x]$. The \textit{formal derivative} of $f$ is
+        \[f'(x) := \sum_{i=1}^{d}ia_ix^{i-1}.\]
+        We say $f$ is \textit{separable over $k$} if $\gcd(f,f')=1$ in $k[x]$, i.e. $f$ has no repeated roots in a fixed algebraic closure $k^s$ of $k$.
+    \end{definition}\pause
+    
+}
+\begin{frame}{}
+    \begin{lemma}
+        A nonzero polynomial $f \in k[x]$ is separable if and only if it has no root $\alpha \in k^s$ such that $f(\alpha)=f'(\alpha)=0$.
+    \end{lemma}\pause
+    \begin{proof}
+        If $\alpha$ is a common root of $f$ and $f'$, then $(x-\alpha)^2$ divides $f(x)$
+        in $k^s[x]$, hence $f$ has a repeated root and is not separable.  Conversely, if
+        $f$ has a repeated root $\alpha$, then $f(x)=(x-\alpha)^2 g(x)$ in $k^s[x]$ for
+        some $g(x)$, so $f'(\alpha)=0$ as well; thus $\alpha$ is a common root of $f$
+        and $f'$.  This is equivalent to $\gcd(f,f')\neq 1$.
+    \end{proof}
+\end{frame}
+
+
+\begin{frame}{}
+    \begin{example}[Separable and inseparable polynomials]
+        \begin{enumerate}
+            \item Over $k=\mathbb{Q}$, the polynomial $f(x)=x^3-2$ is separable, since
+          $f'(x)=3x^2$ has only root $0$, whereas $x^3-2$ has no root at $0$ and in fact has three distinct roots in $\mathbb{C}$.\pause
+          
+            \item Over $k=\mathbb{F}_5$, $f(x)=x^5-x$ is separable: the derivative is
+          $f'(x)=5x^4-1\equiv -1\neq 0$ in $\mathbb{F}_5[x]$, and an easy check shows
+          $f$ has $5$ distinct roots in $\mathbb{F}_5$.\pause
+
+            \item Over $k$ of characteristic $p>0$, the polynomial $f(x)=x^{p}$ is \emph{not} separable: its derivative $f'(x)=px^{p-1}=0$, so $f$ and $f'$ have a common factor $x^p$.
+        \end{enumerate}
+    \end{example}
+\end{frame}
+
+\begin{frame}{}
+    \begin{block}{Remark}
+    For the remainder of this section, we will always assume
+            \[\text{char}(k) \neq 2\]
+        and $f$ is a separable polynomial of degree
+\[
+\deg f = 2n+1\quad\text{(an odd degree)}.
+\]
+We define the associated $k$-algebra
+\[
+L := k[x]/(f(x)).
+\]
+is called the
+\emph{\'etale $k$-algebra attached to $f$}.
+    \end{block}
+\end{frame}
+
+\begin{frame}{}
+    \begin{itemize}
+        \item If $f$ splits over a separable
+closure $k^s$ as $f(x) = \prod_{i=1}^r f_i(x)^{e_i},$ with $f_i$ irreducible monic and $e_i=1$, then
+\[
+L\otimes_k k^s \;\cong\; \prod_{i=1}^r k^s[x]/(f_i(x)).
+\]\pause
+    \item If $f$ splits completely over $k$ as $f(x)=\prod_{j=1}^{2n+1}(x-\alpha_j)$ with distinct $\alpha_j\in k$, then
+\[
+L\cong \prod_{j=1}^{2n+1} k.
+\]
+\end{itemize}
+\end{frame}
+\begin{frame}{}
+    \begin{example}
+\begin{enumerate}
+  \item Let $k=\mathbb{Q}$ and $f(x)=x^5-1$.  Then $L=\mathbb{Q}[x]/(x^5-1)$.
+  Over $\mathbb{C}$ we have $x^5-1=\prod_{j=0}^4 (x-\zeta_5^j)$ with
+  $\zeta_5$ a primitive $5$th root of unity, so
+  \[
+  L\otimes_{\mathbb{Q}}\mathbb{C}\cong \mathbb{C}\times\mathbb{C}\times\mathbb{C}\times\mathbb{C}\times\mathbb{C}.
+  \]
+  Over $\mathbb{Q}$ itself, $x^5-1=(x-1)(x^4+x^3+x^2+x+1)$, so
+  \[
+  L\cong \mathbb{Q}\times K,
+  \]
+  where $K=\mathbb{Q}[x]/(x^4+x^3+x^2+x+1)$ is a number field of degree $4$.\pause
+  \item Let $k=\mathbb{Q}$ and $f(x)=x^3-2$.  Then $L=\mathbb{Q}[x]/(x^3-2)$ is
+  a number field of degree $3$.  Since $x^3-2$ is irreducible over $\mathbb{Q}$,
+  the algebra $L$ is actually a field.
+\end{enumerate}
+\end{example}
+\end{frame}
+    
+\begin{frame}{}
+    \begin{example}{Counter example}
+        If $f(x)$ were not separable (e.g.\ $f(x)=x^2$ in characteristic $2$),
+  then $L$ would \emph{not} be \'etale: the extension $k[x]/(x^2)$ has nilpotent
+  elements, and its behavior is quite different from the product of fields case.
+  This is precisely the situation we wish to avoid by assuming $f$ is separable
+  and $\mathrm{char}(k)\neq 2$.
+    \end{example}
+\end{frame}
+
+\begin{frame}{}
+\begin{definition}[Distinguished element $\beta$]
+In the quotient $L=k[x]/(f(x))$, we denote by
+\[
+\beta := x \bmod (f(x))
+\]
+the image of $x$.  \pause
+
+Every element $\lambda\in L$ can be written uniquely as
+\[
+\lambda = a_0 + a_1\beta + a_2\beta^2 + \cdots + a_{2n}\beta^{2n},\qquad a_i\in k,
+\]
+because $\deg f = 2n+1$ and $1,\beta,\ldots,\beta^{2n}$ form a $k$-basis of $L$.
+\end{definition}
+\end{frame}
+
+\begin{frame}{}
+    \begin{definition}[Trace and norm]
+Let $L$ be a finite \'etale $k$-algebra of dimension $m$.
+Multiplication by an element $\lambda\in L$ defines a $k$-linear endomorphism
+\[
+m_\lambda : L \to L,\qquad \mu\mapsto \lambda\mu.
+\]\pause
+The \emph{trace} and \emph{norm} of $\lambda$ are defined as
+\[
+\mathrm{Tr}_{L/k}(\lambda) := \mathrm{Tr}(m_\lambda),\qquad
+N_{L/k}(\lambda) := \det(m_\lambda)\in k.
+\]
+\end{definition}
+\end{frame}
+
+\begin{frame}{}
+\begin{lemma}[Basic properties of trace and norm]
+Let $L$ be a finite \'etale $k$-algebra.
+For $\lambda,\mu\in L$ we have:
+\begin{enumerate}
+  \item $\mathrm{Tr}_{L/k}(\lambda+\mu)=\mathrm{Tr}_{L/k}(\lambda)+\mathrm{Tr}_{L/k}(\mu)$.\pause
+  
+  \item $\mathrm{Tr}_{L/k}(a\lambda)=a\,\mathrm{Tr}_{L/k}(\lambda)$ for all $a\in k$.\pause
+
+  \item $N_{L/k}(\lambda\mu)=N_{L/k}(\lambda)\cdot N_{L/k}(\mu)$.\pause
+
+  \item If $L$ is a field, then $\lambda$ is invertible in $L$ if and only if $N_{L/k}(\lambda)\neq 0$.
+\end{enumerate}
+\end{lemma}
+\end{frame}
+\begin{frame}{}
+    \begin{proof}
+\begin{itemize}
+    \item (1) and (2) follow from the additivity and $k$-linearity of the trace of a linear operator.\pause
+
+    \item For (3), note that $m_{\lambda\mu}=m_\lambda\circ m_\mu$, so
+\[
+N_{L/k}(\lambda\mu)=\det(m_{\lambda\mu})=\det(m_\lambda)\det(m_\mu)
+=N_{L/k}(\lambda)N_{L/k}(\mu).
+\]\pause
+    \item For (4), if $L$ is a field and $N_{L/k}(\lambda)=0$, then the determinant of
+$m_\lambda$ is $0$, so $m_\lambda$ is not invertible as a $k$-linear map; this implies
+$\lambda$ is not invertible as an element of $L$.
+Conversely, if $\lambda$ is not invertible, then the map $m_\lambda$ has nontrivial kernel,
+so its determinant is $0$ and $N_{L/k}(\lambda)=0$.
+\end{itemize}
+\end{proof}
+\end{frame}
+\begin{frame}{}
+    \begin{example}[Norm and trace in a simple case]
+Take $k=\mathbb{Q}$ and $L=\mathbb{Q}[x]/(x^2+1)\cong\mathbb{Q}(i)$.
+Then $L$ has basis $1,\beta$ with $\beta^2=-1$.
+For $\lambda=a+b\beta$, multiplication by $\lambda$ is represented by the matrix
+\[
+m_\lambda =
+\begin{pmatrix}
+a & -b\\
+b & a
+\end{pmatrix}
+\]
+in the basis $(1,\beta)$.  Hence
+\[
+\mathrm{Tr}_{L/\mathbb{Q}}(\lambda)=2a,\qquad
+N_{L/\mathbb{Q}}(\lambda)=a^2+b^2.
+\]
+These agree with the usual trace and norm from $\mathbb{Q}(i)$ to $\mathbb{Q}$.
+\end{example}
+\end{frame}
+
+\section{Hyperelliptic Curves}
+\begin{frame}{}
+    \begin{block}{Remark}
+        We now attach a hyperelliptic curve to the separable polynomial $f$.
+    \end{block}
+\end{frame}
+\begin{frame}{}
+    \begin{definition}[hyperelliptic curve]
+The affine equation
+\[
+y^2 = f(x)
+\]
+defines a smooth curve over $k$ when considered in the affine plane $\mathbb{A}^2_k$.
+By adding a single point ``at infinity'', denoted $O$, one obtains a smooth projective
+curve $C$ over $k$, called the \emph{hyperelliptic curve} associated to $f$.
+\end{definition}\pause
+\begin{remark}
+One can show that the genus $g$ of $C$ is
+\[
+g = n = \dfrac{\deg f - 1}{2},
+\]
+but we will not prove this here.  For us it is enough to know that $C$ is a
+smooth projective curve of genus $n$.
+\end{remark}
+\end{frame}
+
+\begin{frame}{}
+\begin{example}
+Let $k=\mathbb{Q}$ and $f(x)=x^{5}-1$. Since $f$ is separable and $\deg f=5$ is odd, the affine curve
+\[
+C: y^{2}=x^{5}-1
+\]
+is smooth. After homogenisation, $y^{2}z^{3}=x^{5}-z^{5}$,
+there is exactly one point at infinity $O=(0:1:0)$, giving a smooth projective
+hyperelliptic curve of genus $g=\frac{5-1}{2}=2$.
+
+The smoothness follows from
+\[
+\frac{\partial}{\partial y}(y^{2}-f(x))=2y \neq 0 \quad \text{when } y\neq 0,
+\]
+and at the points $(\alpha,0)$ with $f(\alpha)=0$, since $f$ is separable we have
+\[
+\frac{\partial}{\partial x}(y^{2}-f(x))=-f'(\alpha)\neq 0.
+\]
+\end{example}
+\end{frame}
+\begin{frame}{}
+    \begin{example}
+Over a field of characteristic $2$, consider
+\[
+C: y^{2}=x^{3}.
+\]
+Here $f(x)=x^{3}$ has a triple root at $x=0$, so $f$ is not separable. The partial derivatives are
+\[
+\frac{\partial}{\partial y}(y^{2}-x^{3}) = 2y = 0,\qquad
+\frac{\partial}{\partial x}(y^{2}-x^{3})=-3x^{2}=0
+\]
+at $(0,0)$.
+Hence the gradient vanishes and $(0,0)$ is a singular point. Thus $C$ is not smooth and does not produce a hyperelliptic curve after compactification.
+\end{example}
+\end{frame}
+
+\begin{frame}{}
+    \begin{definition}[Weierstrass points]
+The branch points of $\pi:C\to\mathbb{P}^1_k,~(x,y)\mapsto x$ are called \emph{Weierstrass points}.
+These consist of:
+\begin{itemize}
+  \item the point $O$ above $x=\infty$ (when $\deg f$ is odd);
+  \item points $(\alpha,0)$ where $\alpha\in k^s$ is a root of $f(x)$.
+\end{itemize}
+If $\alpha\in k$ is a root of $f$, then $(\alpha,0)$ is a $k$-rational Weierstrass point.
+\end{definition}
+\end{frame}
+\begin{frame}{}
+    \begin{example}
+Let $k=\mathbb{Q}$ and $f(x)=x^5-1$.  Then
+\[
+C:\ y^2 = x^5 - 1
+\]
+is a genus $g=2$ hyperelliptic curve.  The Weierstrass points are:
+\begin{itemize}
+  \item the point at infinity $O$;
+  \item the points $(\alpha,0)$ where $\alpha$ runs through the five roots of
+  $x^5-1$ in $\mathbb{C}$.  Over $\mathbb{Q}$, only the root $\alpha=1$ is rational,
+  so $(1,0)\in C(\mathbb{Q})$ is the only finite rational Weierstrass point.
+\end{itemize}
+\end{example}
+\end{frame}
+\begin{frame}{}
+    \begin{example}[a counter-example if $f$ is not separable]
+Suppose $k$ has characteristic $2$ and consider $C:y^2=x^3$.
+
+Then $f(x)=x^3$ has a triple root at $x=0$, and the curve has a singularity
+at $(0,0)$: the derivative $\partial (y^2-x^3)/\partial y = 2y$ vanishes identically,
+so the usual smoothness criterion fails.
+
+This is precisely why we require $f$ to be separable and $\mathrm{char}(k)\neq 2$:
+to ensure that $C$ is smooth.
+\end{example}
+\end{frame}
+
+\section{Divisors and the Jacobian}
+\begin{frame}{}
+    \begin{definition}[Divisors]
+Let $C$ be a smooth projective curve over $k$.\pause
+\begin{itemize}
+    \item A \emph{divisor} on $C$ is a finite formal sum
+\[
+D = \sum_{P\in C(\bar{k})} n_P [P],
+\]
+where $n_P\in\mathbb{Z}$ and only finitely many $n_P$ are nonzero.\pause
+
+    \item The \emph{degree}
+of $D$ is
+\[
+\deg D := \sum_{P} n_P.
+\]\pause
+    \item We denote by $\mathrm{Div}(C)$ the abelian group of divisors on $C$.
+\end{itemize}
+\end{definition}
+\end{frame}
+
+\begin{frame}{}
+    \begin{definition}[Valuation at a point $P$]
+  Let $C$ be a smooth projective curve over $k$, and let
+  $P \in C(\bar{k})$ be a (geometric) point. Denote by
+  $\mathcal{O}_{C,P}$ the local ring of $C$ at $P$, and by
+  $K(C)$ the function field of $C$.
+
+  \begin{itemize}
+    \item The local ring $\mathcal{O}_{C,P}$ is a discrete valuation ring
+          (since $C$ is a smooth curve), with maximal ideal $\mathfrak{m}_P$.
+          \pause
+
+    \item A \emph{uniformizer} (or local parameter) at $P$ is an element
+          $t \in \mathcal{O}_{C,P}$ such that $\mathfrak{m}_P = (t)$.
+          Intuitively, $t$ is a local coordinate vanishing to first order at $P$.
+          \pause
+
+    \item For a nonzero rational function $f \in K(C)^\times$, we can write
+          (uniquely)
+          \[
+            f = t^{n} u,
+          \]
+          where $u \in \mathcal{O}_{C,P}^\times$ is a unit (invertible at $P$)
+          and $n \in \mathbb{Z}$.
+  \end{itemize}
+
+  \pause
+
+\end{definition}
+
+\end{frame}
+\begin{frame}{}
+    The \emph{valuation of $f$ at $P$} is defined by
+  \[
+    v_P(f) := n.
+  \]
+
+  \begin{itemize}
+    \item If $n > 0$, then $f$ has a zero of order $n$ at $P$.
+    \item If $n = 0$, then $f$ is \emph{regular and nonvanishing} at $P$.
+    \item If $n < 0$, then $f$ has a pole of order $-n$ at $P$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{}
+\begin{example}
+Consider the hyperelliptic curve
+\[
+C : y^{2} = x^{5} - 1,
+\]
+and let $P=(1,0)$, a Weierstrass point.  We study the valuation of the
+rational function
+\[
+f = x - 1 \in K(C)^\times.
+\]
+\end{example}
+\pause
+\end{frame}
+\begin{frame}{}
+\begin{block}{}
+Near a Weierstrass point $(\alpha,0)$ we have
+\[
+y^{2} = (x-\alpha)g(x), \qquad g(\alpha)\neq 0.
+\]
+Thus $y$ vanishes to order $1$ and is a \emph{uniformizer}:
+\[
+t = y, \qquad v_P(y)=1.
+\]
+\end{block}
+
+\pause
+At $P=(1,0)$,
+\[
+x-1 = \frac{y^{2}}{g(x)} = t^{2}\cdot u,
+\]
+where $u$ is a unit in $\mathcal{O}_{C,P}$ since $g(1)\neq 0$.
+
+\pause
+So $v_P(x-1) = 2$ and thus $f=x-1$ has a \alert{zero of order $2$} at the point $P=(1,0)$.
+\end{frame}
+
+
+\begin{frame}{}
+    \begin{definition}[Principal divisors and linear equivalence]
+Let $K(C)$ be the function field of $C$.
+
+For $f\in K(C)^\times$, the \emph{principal divisor}
+of $f$ is
+\[
+\mathrm{div}(f) = \sum_{P\in C(\bar k)} v_P(f)[P],
+\]
+where $v_P$ is the valuation at $P$.  \pause
+
+Two divisors $D_1,D_2$ are said to be
+\emph{linearly equivalent}, written $D_1\sim D_2$, if their difference is principal:
+\[D_1-D_2 = \mathrm{div}(f) \text{ for some } f\in K(C)^\times.\]
+\end{definition}
+\end{frame}
+\begin{frame}{}
+    \begin{definition}[Picard group and Jacobian]
+The \emph{Picard group} of $C$ is the quotient
+\[
+\mathrm{Pic}(C) := \dfrac{\mathrm{Div}(C)}{\{\text{principal divisors}\}}.
+\]\pause
+The subgroup of divisor classes of degree zero is denoted
+\[
+\mathrm{Pic}^0(C) := \{ [D]\in \mathrm{Pic}(C): \deg D = 0\}.
+\]\pause
+The \emph{Jacobian} of $C$, denoted $J=\mathrm{Jac}(C)$, is the abelian variety over $k$
+whose group of $k$-rational points is canonically isomorphic to $\mathrm{Pic}^0(C)$:
+\[
+J(k)\ \cong\ \mathrm{Pic}^0(C)(k).
+\]
+\end{definition}
+\end{frame}
+\begin{frame}{}
+    \begin{remark}
+    We will freely identify $J(k)$ with
+$\mathrm{Pic}^0(C)(k)$, i.e.\ with divisor classes of degree $0$ on $C$ modulo
+linear equivalence.
+\end{remark}
+\end{frame}
+\begin{frame}{}
+    \begin{example}[Simple degree zero divisors]
+Let $C:y^2=x^5-1$ over $\mathbb{Q}$ and let $O$ be the point at infinity.
+\begin{itemize}
+    \item If $P=(a,b)\in C(\mathbb{Q})$ is any rational point, then
+\[
+D := (P) - (O)
+\]
+is a divisor of degree $1-1=0$ and thus defines a class $[D]\in \mathrm{Pic}^0(C)$.\pause
+    
+    \item If $P$ varies over $C(\mathbb{Q})$, the set of classes $[(P)-(O)]$ generate
+a subgroup of $J(\mathbb{Q})$.
+\end{itemize}
+\end{example}
+\end{frame}
+
+\begin{frame}{}
+\begin{example}[Principal divisor on a hyperelliptic curve]
+Let $C:y^2=f(x)$ with $f$ separable.
+
+Consider the rational function $x\in K(C)$.  Its divisor is
+\[
+\mathrm{div}(x) = \sum_{\alpha:\ f(\alpha)=0} [( \alpha,0)] - d\cdot [O],
+\]
+where $d=\deg f$ (this is because $x$ has a simple zero at each point $(\alpha,0)$ and a pole of order $d$ at $O$).  Thus the divisor
+\[
+\sum_{\alpha:\ f(\alpha)=0} (\alpha,0) - d\cdot O
+\]
+is principal, hence linearly equivalent to $0$.
+\end{example}
+\end{frame}
+\section{The 2-torsion subgroup $J[2]$}
+\begin{frame}{}
+    \begin{remark}
+        We now define $J[2]$ and give an explicit description in terms of Weierstrass points.
+    \end{remark}
+\end{frame}
+\begin{frame}{}
+    \begin{definition}[$2$-torsion]
+Let $J$ be the Jacobian of $C$.
+The \emph{$2$-torsion subgroup} of $J$ is
+\[
+J[2] := \{ P\in J(\bar{k}) : 2P=0\}.
+\]
+Equivalently, $J[2]$ can be viewed as the group scheme-theoretic kernel of
+the multiplication-by-$2$ map $[2]:J\to J$.
+\end{definition}
+\end{frame}
+\begin{frame}{Example of the $2$-torsion subgroup $J[2]$}
+
+Let $C$ be the elliptic curve
+\[
+  C : y^{2} = x^{3} - x
+\]
+over a field $k$ of characteristic $\neq 2$. In this case the Jacobian $J = \mathrm{Jac}(C)$
+is canonically isomorphic to $C$ itself, with group law given by the usual chord--tangent
+construction and identity element the point at infinity $O$.
+
+\pause
+The right-hand side factors as
+\[
+  x^{3} - x = x(x-1)(x+1),
+\]
+so the three points with $y=0$ are
+\[
+  P_{1} = (0,0), \quad P_{2} = (1,0), \quad P_{3} = (-1,0).
+\]
+\end{frame}
+
+\begin{frame}{}
+    For an elliptic curve in Weierstrass form
+\[
+  E : y^{2} = f(x),
+\]
+it is a standard fact that a point $P=(a,0)$ with $f(a)=0$ satisfies $2P=O$:
+the tangent at $P$ is vertical, so the reflection rule for the group law gives $P + P = O$.
+Hence each $P_i$ above has order $2$ in the group law on $C$.
+
+\pause
+Therefore the $2$-torsion subgroup of the Jacobian is
+\[
+  J[2](\bar{k})
+  \;=\;
+  C[2](\bar{k})
+  \;=\;
+  \{\, O,\; (0,0),\; (1,0),\; (-1,0) \,\},
+\]
+and each of these points satisfies $2P = 0$ in $J(\bar{k})$.  
+\end{frame}
+\begin{frame}{}
+    \begin{proposition}\label{prop:J2-Weierstrass}
+Let $C:y^2=f(x)$ be a hyperelliptic curve of genus $g=n$ over $k$, with $f$ separable
+of odd degree $2n+1$.  Let $\{P_1,\dots,P_{2n+1}\}$ be the finite Weierstrass points
+$(\alpha,0)$ lying over the roots $\alpha$ of $f$, and let $P_\infty=O$ be the
+Weierstrass point at infinity.  
+\end{proposition}
+\end{frame}
+\begin{frame}{}
+    Then:
+\begin{enumerate}
+  \item In $\mathrm{Pic}^0(C)(\bar k)$ the divisor
+  \[
+  \sum_{i=1}^{2n+1} [P_i] - (2n+1)[P_\infty]
+  \]
+  is principal (linearly equivalent to $0$).\pause
+  \item Every class in $J[2]$ can be represented by a divisor
+  \[
+  D = \sum_{i=1}^{2n+1} \epsilon_i [P_i] - \left(\sum_{i=1}^{2n+1}\epsilon_i\right)[P_\infty],
+  \]
+  where each $\epsilon_i\in\{0,1\}$ and the sum $\sum_i \epsilon_i$ is even.\pause
+  \item The group $J[2](\bar k)$ is isomorphic (as an abstract group) to
+  $(\mathbb{Z}/2\mathbb{Z})^{2g}$.
+\end{enumerate}
+\end{frame}
+\begin{frame}{Proof of (1): Step 1 — Zeros of $x$ at $P_i$}
+
+For each finite Weierstrass point $P_i=(\alpha_i,0)$ we have
+\[
+f(\alpha_i)=0, \qquad f'(\alpha_i)\neq 0 \quad (\text{$f$ separable}).
+\]
+
+Thus $x-\alpha_i$ is a local parameter at $P_i$, so
+\[
+v_{P_i}(x-\alpha_i)=1
+\quad\Rightarrow\quad
+v_{P_i}(x)=1.
+\]
+
+Hence $x$ has a simple zero at each of the $2n+1$ finite Weierstrass points.
+\end{frame}
+\begin{frame}{Proof of (1): Step 2 — Pole of $x$ at $P_\infty$}
+
+Since $\deg f = 2n+1$ is odd, the hyperelliptic curve has a unique point at infinity
+$P_\infty$.
+
+Using homogeneous coordinates on the model
+\[
+y^{2}z^{2n-1} = x^{2n+1} - z^{2n+1},
+\]
+one checks that $x/z$ has a pole of order $2n+1$ at $P_\infty$.
+
+Thus
+\[
+v_{P_\infty}(x) = -(2n+1).
+\]
+
+Hence $x$ has exactly one pole, at $P_\infty$, of order $2n+1$.
+\end{frame}
+\begin{frame}{Proof of (1): Step 3 — The divisor of $x$}
+
+Collecting zeros and poles:
+\[
+\operatorname{div}(x)
+= \sum_{i=1}^{2n+1}[P_i] \;-\; (2n+1)[P_\infty].
+\]
+
+Since this is the divisor of the rational function $x$, it is principal:
+\[
+\sum_{i=1}^{2n+1}[P_i] - (2n+1)[P_\infty] \sim 0.
+\]
+
+This completes the proof of part (1).
+\end{frame}
+\begin{frame}{Proof of (2): Step 1 — Start with a $2$-torsion class}
+
+Let $D \in J[2]$.
+By definition,
+\[
+2D \sim 0.
+\]
+
+Choose any divisor $E$ with $[E]=D$.  
+Then:
+\[
+2E \sim 0.
+\]
+
+We will transform $E$ to a canonical representative supported on Weierstrass points.
+\end{frame}
+\begin{frame}{Proof of (2): Step 2 — Hyperelliptic involution}
+
+Let $\iota:C\to C$ be the involution $(x,y)\mapsto(x,-y)$.
+
+For any divisor $E$,
+\[
+E + \iota(E) \sim (\deg E)\,[P_\infty].
+\]
+
+Reason:
+\begin{itemize}
+\item The map $\pi:C\to\mathbb{P}^1$ has degree $2$.
+\item Points $P$ and $\iota(P)$ lie in the same fiber.
+\item Every fiber is linearly equivalent to $2[P_\infty]$.
+\end{itemize}
+\end{frame}
+\begin{frame}{Proof of (2): Step 3 — $\deg(E)=0$}
+
+From $2E \sim 0$ we have:
+\[
+E + \iota(E) \sim 0.
+\]
+
+But also:
+\[
+E + \iota(E) \sim (\deg E)\,[P_\infty].
+\]
+
+Thus:
+\[
+(\deg E)\,[P_\infty] \sim 0.
+\]
+
+Since $[P_\infty]$ has degree $1$, the only possibility is
+\[
+\deg E = 0.
+\]
+
+Hence we may assume from now on that $E$ is a degree-zero divisor.
+\end{frame}
+\begin{frame}{Proof of (2): Step 4 — Support on Weierstrass points}
+
+By Riemann--Roch and the geometry of the hyperelliptic map,  
+any divisor class of order dividing $2$ has a representative
+supported entirely on the ramification points:
+\[
+P_1,\dots,P_{2n+1},P_\infty.
+\]
+
+Thus we may write
+\[
+E = \sum_{i=1}^{2n+1} a_i [P_i] + b [P_\infty],
+\qquad a_i,b \in \mathbb{Z},
+\]
+with degree-zero condition
+\[
+\sum_i a_i + b = 0.
+\]
+\end{frame}
+\begin{frame}{Proof of (2): Step 5 — Reduce coefficients modulo $2$}
+
+From part (1):
+\[
+\sum_{i=1}^{2n+1}[P_i] - (2n+1)[P_\infty] \sim 0.
+\]
+
+Adding this principal divisor allows us to shift all coefficients $a_i$
+by the same integer without changing the linear equivalence class of $E$.
+
+Therefore we may assume
+\[
+a_i \in \{0,1\}.
+\]
+
+Let $\epsilon_i := a_i$.  
+Then
+\[
+b = -\sum_{i=1}^{2n+1} \epsilon_i.
+\]
+\end{frame}
+\begin{frame}{Proof of (2): Step 6 — Even parity}
+
+The divisor becomes
+\[
+D = \sum_{i=1}^{2n+1} \epsilon_i [P_i]
+    - \left(\sum_{i=1}^{2n+1} \epsilon_i\right)[P_\infty].
+\]
+
+The condition $2D \sim 0$ forces
+\[
+\sum_{i=1}^{2n+1}\epsilon_i \equiv 0 \pmod{2}.
+\]
+
+Thus every $2$-torsion class is represented by an even subset of Weierstrass points.
+\end{frame}
+\begin{frame}{Proof of (3): Step 1 — Counting}
+
+Each $2$-torsion element corresponds to a tuple
+\[
+(\epsilon_1,\dots,\epsilon_{2n+1}) \in \{0,1\}^{2n+1},
+\]
+satisfying the single condition
+\[
+\sum_i \epsilon_i \equiv 0 \pmod{2}.
+\]
+
+This is the even-weight subspace of $(\mathbb{Z}/2\mathbb{Z})^{2n+1}$.
+\end{frame}
+\begin{frame}{Proof of (3): Step 2 — Dimension and structure}
+
+The even-weight subspace has codimension $1$, hence dimension $2n = 2g$.
+
+Therefore:
+\[
+|J[2](\bar{k})| = 2^{2n} = 2^{2g}.
+\]
+
+Since $J[2]$ is a finite étale group scheme of rank $2^{2g}$,
+it is abstractly isomorphic to
+\[
+J[2](\bar{k}) \cong (\mathbb{Z}/2\mathbb{Z})^{2g}.
+\]
+
+This completes the proof.
+\end{frame}
+
+\begin{frame}{}
+    \begin{example}[Genus $1$]
+Let $C:y^2=f(x)$ with $\deg f=3$ and $f$ separable; this is an elliptic curve.
+There are $3$ finite Weierstrass points $P_1,P_2,P_3$ and one point at infinity $P_\infty$.
+One shows that $J[2]=C[2]$ has at most $4$ elements:
+\[
+C[2](\bar k)=\{O,P_1,P_2,P_3\},
+\]
+where $O=P_\infty$ is the identity.  Over $\mathbb{Q}$, some of the $P_i$ may fail to be
+rational; in that case the $\mathbb{Q}$-rational $2$-torsion is smaller.  This matches
+Proposition~\ref{prop:J2-Weierstrass} with $g=1$.
+\end{example}
+\end{frame}
+\begin{frame}{}
+    \begin{example}[Genus $2$]
+Let $C:y^2=x^5-1$ over $\mathbb{Q}$.  Then $g=2$, and there are $5$ finite Weierstrass
+points $P_1,\dots,P_5$ (over $\mathbb{C}$) and $P_\infty$.  The group $J[2](\bar{\mathbb{Q}})$
+has $2^{4}=16$ elements, each represented by a formal even subset of the $P_i$.
+For instance,
+\[
+D = [P_1]+[P_3] - 2[P_\infty]
+\]
+is a divisor of degree $0$ and order $2$ in $J(\bar{\mathbb{Q}})$.
+\end{example}
+\end{frame}
+\begin{frame}{}
+    \begin{example}[Counter-example]
+If $C$ is a smooth plane cubic (elliptic curve) presented in non-hyperelliptic form
+(e.g.\ $y^2z=x^3+axz^2+bz^3$), the description of $C[2]$ in terms of Weierstrass
+points and a polynomial $f(x)$ is less direct; one needs to transform the equation
+to a Weierstrass form $y^2=f(x)$ first.  This shows that Proposition~\ref{prop:J2-Weierstrass}
+is specific to the hyperelliptic model.
+\end{example}
+\end{frame}
+
+\begin{frame}{Conclusion}
+Building upon the foundation of the hyperelliptic curves discussed above, we can now proceed towards the next research direction concerning \textbf{the correspondence between Galois cohomology and rational orbits}. The subsequent research steps are as follows:
+\begin{enumerate}
+  \item Identify $J[2]$ with the finite \'etale group scheme $D=\mathrm{Res}_{L/k}(\mu_2)_{N=1}$.
+  \item Identify $H^1(k,J[2])$ with $(L^\times/L^{\times 2})_{N\equiv 1}$.
+  \item Construct the Kummer map $\delta:J(k)/2J(k)\to H^1(k,J[2])$ and describe it explicitly
+  for divisor classes coming from rational points.
+  \item Define the orthogonal group $G=\mathrm{SO}(W)$, the representation $V$, the stabilizer
+  $G_S$, and the map $\eta:H^1(k,G_S)\to H^1(k,G)$.
+  \item Construct the pencil of quadrics and the Fano variety $F_\alpha$ for $\alpha\in H^1(k,J[2])$.
+\end{enumerate}
+\end{frame}
+\section{Appendix: Genus of a Curve}
+
+\begin{frame}{Genus of a curve: formal definition}
+
+\begin{definition}[Genus]
+Let $C$ be a smooth, projective, geometrically integral curve over a field $k$.
+The \emph{genus} of $C$ is defined to be
+\[
+  g(C) := \dim_k H^0\bigl(C,\Omega^1_{C/k}\bigr).
+\]
+\end{definition}
+
+\medskip
+
+\begin{itemize}
+  \item This is the \alert{modern algebraic geometry} definition.
+  \item Intuitively, $g(C)$ measures the ``complexity'' of $C$:
+        over $\mathbb{C}$ it equals the number of holes of the associated
+        Riemann surface.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{$C$: the curve}
+
+\begin{block}{The curve $C$}
+In this context, $C$ is assumed to be:
+\begin{itemize}
+  \item \textbf{smooth}: no singular points;
+  \item \textbf{projective}: can be embedded in some $\mathbb{P}^n_k$ and is complete;
+  \item \textbf{geometrically integral}:
+        $C_{\bar{k}}$ is irreducible and reduced over an algebraic closure $\bar{k}$;
+  \item \textbf{dimension $1$}: $C$ is a one-dimensional variety (a curve).
+\end{itemize}
+\end{block}
+
+\medskip
+
+\begin{itemize}
+  \item These hypotheses ensure that the global geometry of $C$
+        behaves like a compact Riemann surface.
+  \item In particular, cohomology groups such as $H^0(C,\Omega_{C/k}^1)$
+        are finite-dimensional $k$-vector spaces.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{$k$: the base field and $\dim_k$}
+
+\begin{block}{The base field $k$}
+All our objects are considered over a fixed field $k$:
+\begin{itemize}
+  \item points of $C$ are $k$-rational or $\bar{k}$-rational;
+  \item functions on $C$ form the function field $K(C)$, a field extension of $k$;
+  \item cohomology groups such as $H^0(C,\Omega^1_{C/k})$ are
+        vector spaces over $k$.
+\end{itemize}
+\end{block}
+
+
+\begin{block}{The notation $\dim_k$}
+If $V$ is a vector space over $k$, then $\dim_k V$ denotes its \emph{dimension as a $k$-vector space}. In our case,
+\[
+  \dim_k H^0(C,\Omega^1_{C/k})
+\]
+is the number of linearly independent global regular differentials on $C$.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{$\Omega^1_{C/k}$: the sheaf of differentials}
+
+\begin{block}{Sheaf of Kähler differentials}
+The symbol $\Omega^1_{C/k}$ denotes the \emph{sheaf of regular differentials}
+(or Kähler differentials) of $C$ over $k$.
+\end{block}
+
+\begin{itemize}
+  \item For every open subset $U \subseteq C$, the sections
+        \[
+          \Omega^1_{C/k}(U)
+        \]
+        are the regular $1$-forms on $U$.
+  \item Locally (in affine coordinates), these look like finite sums
+        \[
+          f(x)\,dx, \quad \frac{g(x)}{h(x)}\,dx,
+        \]
+        which glue together to give a global geometric object.
+  \item On a smooth curve, $\Omega^1_{C/k}$ is an \emph{invertible sheaf}
+        (a line bundle), often denoted by $\omega_C$ or $\mathcal{O}_C(K_C)$,
+        where $K_C$ is a canonical divisor.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{$H^0(C,\Omega^1_{C/k})$: global sections}
+
+\begin{block}{Sheaf cohomology in degree $0$}
+For any coherent sheaf $\mathcal{F}$ on $C$, the group
+\[
+  H^0(C,\mathcal{F})
+\]
+is the space of \emph{global sections} of $\mathcal{F}$ on $C$.
+\end{block}
+
+\medskip
+
+In our case:
+\[
+  H^0(C,\Omega^1_{C/k})
+  = \Omega^1_{C/k}(C)
+\]
+is the vector space of all \alert{global regular differential $1$-forms} on $C$.
+
+\medskip
+
+\begin{itemize}
+  \item Elements of $H^0(C,\Omega^1_{C/k})$ are regular everywhere on $C$:
+        they have no poles.
+  \item This space is finite-dimensional over $k$.
+  \item Its dimension is, by definition, the genus $g(C)$.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{Putting it together: $g(C) = \dim_k H^0(C,\Omega^1_{C/k})$}
+
+\begin{block}{Formal definition}
+\[
+  g(C) := \dim_k H^0\bigl(C,\Omega^1_{C/k}\bigr).
+\]
+\end{block}
+
+\medskip
+
+\begin{itemize}
+  \item $H^0(C,\Omega^1_{C/k})$ is the space of global regular $1$-forms on $C$.
+  \item Its dimension over $k$ counts how many linearly independent
+        regular differentials $C$ has.
+  \item This number is an intrinsic invariant of the curve: the \emph{genus}.
+\end{itemize}
+
+\medskip
+
+\begin{block}{Topological meaning (when $k=\mathbb{C}$)}
+If $k=\mathbb{C}$, then $C(\mathbb{C})$ is a compact Riemann surface and
+\[
+  g(C) = \text{number of ``holes'' (handles) of the surface}.
+\]
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{Examples of genus}
+
+\begin{exampleblock}{Projective line $\mathbb{P}^1_k$}
+One can show that
+\[
+  H^0(\mathbb{P}^1_k,\Omega^1_{\mathbb{P}^1_k/k}) = 0,
+\]
+hence $g(\mathbb{P}^1_k) = 0$.
+\end{exampleblock}
+
+\begin{exampleblock}{Elliptic curve $E:y^2=x^3-x$}
+On an elliptic curve in Weierstrass form, a regular differential is
+\[
+  \omega = \frac{dx}{y}.
+\]
+This spans the whole space $H^0(E,\Omega^1_{E/k})$, so
+\[
+  \dim_k H^0(E,\Omega^1_{E/k}) = 1,
+\]
+and therefore $g(E)=1$.
+\end{exampleblock}
+
+\end{frame}
+
+%----------------------------------------------------
+\begin{frame}{Hyperelliptic example: $y^{2}=f(x)$, $\deg f=2g+1$}
+
+Consider a hyperelliptic curve
+\[
+  C : y^2 = f(x)
+\]
+with $f$ separable of odd degree $2g+1$ and $\operatorname{char}(k)\neq 2$.
+
+\medskip
+The differentials
+\[
+  \frac{dx}{y},\; x\frac{dx}{y},\; \dots,\; x^{g-1}\frac{dx}{y}
+\]
+are regular on $C$ and linearly independent in
+$H^0(C,\Omega^1_{C/k})$.
+
+\medskip
+Thus
+\[
+  \dim_k H^0(C,\Omega^1_{C/k}) = g,
+\]
+so the genus of $C$ is
+\[
+  g(C) = \frac{\deg f - 1}{2}.
+\]
+
+\end{frame}
+\begin{frame}{Riemann--Roch and the genus}
+
+Let $C$ be a smooth, projective, geometrically integral curve over $k$,
+and let $D$ be a divisor on $C$.
+Define
+\[
+  \ell(D) := \dim_k H^0\bigl(C,\mathcal{O}_C(D)\bigr).
+\]
+
+\begin{block}{Riemann--Roch theorem}
+There exists a canonical divisor $K_C$ on $C$ such that for every divisor $D$,
+\[
+  \ell(D) - \ell(K_C - D) = \deg(D) - g + 1,
+\]
+where $g = g(C) := \dim_k H^0\bigl(C,\Omega^1_{C/k}\bigr)$ is the genus of $C$.
+\end{block}
+
+\begin{itemize}
+  \item The genus $g$ appears as the central invariant in Riemann--Roch.
+  \item For $D=0$, we get 
+  \[\ell(0) - \ell(K_C) = 0 - g + 1 \;\Rightarrow\; 1 - g = 1 - g,\]
+    consistent with $\ell(K_C)=g$.
+\end{itemize}
+
+\end{frame}
+\begin{frame}{Euler characteristic and genus}
+
+For any coherent sheaf $\mathcal{F}$ on $C$, define the Euler characteristic
+\[
+  \chi(\mathcal{F}) := \dim_k H^0(C,\mathcal{F})
+                       - \dim_k H^1(C,\mathcal{F}).
+\]
+
+\begin{block}{Structure sheaf}
+For the structure sheaf $\mathcal{O}_C$, we have
+\[
+  \chi(\mathcal{O}_C)
+  = \dim_k H^0(C,\mathcal{O}_C) - \dim_k H^1(C,\mathcal{O}_C).
+\]
+On a connected curve,
+\[
+  H^0(C,\mathcal{O}_C) \cong k,
+\]
+so $\dim_k H^0(C,\mathcal{O}_C) = 1$.
+\end{block}
+\end{frame}
+\begin{frame}{}
+\begin{block}{Relation to genus}
+One shows that
+\[
+  H^1(C,\mathcal{O}_C)^\vee \cong H^0(C,\Omega^1_{C/k}),
+\]
+so
+\[
+  \dim_k H^1(C,\mathcal{O}_C) = \dim_k H^0(C,\Omega^1_{C/k}) = g.
+\]
+Thus
+\[
+  \chi(\mathcal{O}_C) = 1 - g.
+\]
+\end{block}
+
+\end{frame}
+\begin{frame}{Genus of a smooth plane curve}
+
+Let $C \subset \mathbb{P}^2_k$ be a smooth plane curve of degree $d$.
+
+\begin{block}{Formula for the genus}
+The genus of $C$ is given by
+\[
+  g(C) = \frac{(d-1)(d-2)}{2}.
+\]
+\end{block}
+
+\medskip
+
+\begin{itemize}
+  \item For a smooth conic ($d=2$): $g = \frac{1\cdot 0}{2} = 0$.
+  \item For a smooth cubic ($d=3$): $g = \frac{2\cdot 1}{2} = 1$
+        (elliptic curve).
+  \item For a smooth quartic ($d=4$): $g = \frac{3\cdot 2}{2} = 3$.
+\end{itemize}
+
+\medskip
+
+\alert{Warning:} this formula is valid only for \emph{smooth} plane curves.
+If $C$ has singularities, the geometric genus is strictly smaller.
+
+\end{frame}
+
+\begin{frame}{Counterexample: singular cubic and genus}
+
+Consider the plane curve
+\[
+  C : y^{2} = x^{3}
+\]
+over a field of characteristic $\neq 2,3$.
+
+\begin{itemize}
+  \item As a plane cubic ($d=3$), the formula
+        \[
+          g = \frac{(d-1)(d-2)}{2}
+          = \frac{2\cdot 1}{2} = 1
+        \]
+        would suggest genus $1$.
+  \item However, $C$ is \emph{singular} at $(0,0)$.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\begin{block}{Normalization and true genus}
+The normalization of $C$ is isomorphic to $\mathbb{P}^1_k$, which has genus $0$.
+Thus the geometric genus of $C$ is
+\[
+  g(C) = 0.
+\]
+
+This shows that the plane-degree formula for genus
+\[
+  g=\frac{(d-1)(d-2)}{2}
+\]
+requires the curve to be \emph{smooth}.
+\end{block}
+
+\end{frame}
+\begin{frame}{Counter-example: inseparable $f$ in $y^{2}=f(x)$}
+
+Consider a curve
+\[
+  C : y^2 = f(x)
+\]
+over a field $k$ of characteristic $2$, with
+\[
+  f(x) = x^{3}.
+\]
+
+\begin{itemize}
+  \item Here $f'(x) = 3x^{2} \equiv x^{2}$ in characteristic $2$,
+        so $f'(0)=0$ and $f$ has a multiple root at $x=0$.
+  \item The curve has a singularity at $(0,0)$.
+\end{itemize}
+\end{frame}
+\begin{frame}{}
+\begin{block}{Failure of the hyperelliptic genus formula}
+For a \emph{smooth} hyperelliptic curve
+\[
+  y^{2}=f(x), \quad \deg f = 2g+1,\ f \text{ separable},
+\]
+one has
+\[
+  g = \frac{\deg f - 1}{2}.
+\]
+In the inseparable or singular case (as above), this formula no longer applies:
+the curve is not smooth, and the genus must be computed from the
+normalization instead.
+\end{block}
+
+\end{frame}
+
+
+
+\section{References}
+
+\begin{frame}{References}
+\small
+\begin{thebibliography}{99}
+
+\bibitem{SilvermanAEC}
+J.~H.~Silverman,
+\emph{The Arithmetic of Elliptic Curves},
+Graduate Texts in Mathematics 106, Springer, 2009.
+
+\bibitem{GrossHanoi}
+B.~H.~Gross,
+Hanoi Lectures on the Arithmetic of Hyperelliptic Curves,
+\emph{Acta Mathematica Vietnamica}, Vol.~37, No.~4.
+
+\bibitem{BhargavaGross}
+M.~Bhargava and B.~H.~Gross,
+The average size of the 2-Selmer group of Jacobians of hyperelliptic curves having a rational Weierstrass point,
+\emph{arXiv:1208.1007}, 2012.
+
+\end{thebibliography}
+\end{frame}
+
+\begin{frame}
+\centering
+\vfill
+\Huge {Thank you for your attention!}
+\vfill
+\end{frame}
+\end{document}
